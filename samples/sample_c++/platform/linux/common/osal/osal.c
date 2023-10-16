@@ -296,10 +296,10 @@ T_DjiReturnCode Osal_SemaphorePost(T_DjiSemaHandle semaphore)
  */
 T_DjiReturnCode Osal_GetTimeMs(uint32_t *ms)
 {
-    struct timeval time;
+    struct timespec time;
 
-    gettimeofday(&time, NULL);
-    *ms = (time.tv_sec * 1000 + time.tv_usec / 1000);
+    clock_gettime(CLOCK_MONOTONIC, &time);
+    *ms = (time.tv_sec * 1000) + (time.tv_nsec / 1000 / 1000);
 
     if (s_localTimeMsOffset == 0) {
         s_localTimeMsOffset = *ms;
@@ -312,10 +312,10 @@ T_DjiReturnCode Osal_GetTimeMs(uint32_t *ms)
 
 T_DjiReturnCode Osal_GetTimeUs(uint64_t *us)
 {
-    struct timeval time;
+    struct timespec time;
 
-    gettimeofday(&time, NULL);
-    *us = (time.tv_sec * 1000000 + time.tv_usec);
+    clock_gettime(CLOCK_MONOTONIC, &time);
+    *us = (time.tv_sec * 1000 * 1000) + (time.tv_nsec / 1000);
 
     if (s_localTimeUsOffset == 0) {
         s_localTimeUsOffset = *us;
