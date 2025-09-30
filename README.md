@@ -1,8 +1,8 @@
 # DJI Payload SDK (PSDK)
 
-![](https://img.shields.io/badge/version-V3.5.0-yellow.svg)
-![](https://img.shields.io/badge/platform-linux_|_rtos-green.svg)
-![](https://img.shields.io/badge/license-MIT-blue.svg)
+![](https://img.shields.io/badge/version-V3.13.1-purple.svg)
+![](https://img.shields.io/badge/platform-linux_|_rtos-red.svg)
+![](https://img.shields.io/badge/license-MIT-cyan.svg)
 
 ## What is the DJI Payload SDK?
 
@@ -15,45 +15,31 @@ Flight Controller, Payload Controller, Video Image Analysis Platform, Mapping Ca
 ## Documentation
 
 For full documentation, please visit
-the [DJI Developer Documentation](https://developer.dji.com/doc/payload-sdk-tutorial/en/). Documentation
-regarding the code can be found in the [PSDK API Reference](https://developer.dji.com/doc/payload-sdk-api-reference/en/)
+the [DJI Developer Documentation](https://developer.dji.com/doc/payload-sdk-tutorial/en/). Documentation regarding the
+code can be found in the [PSDK API Reference](https://developer.dji.com/doc/payload-sdk-api-reference/en/)
 section of the developer's website. Please visit
 the [Latest Version Information](https://developer.dji.com/doc/payload-sdk-tutorial/en/)
 to get the latest version information.
 
 ## Latest Release
 
-PSDK 3.5.0 was released on 18 May 2023. This version of Payload SDK mainly add support for M350 RTK, also add some new features support and fixed some bugs. 
-Please refer to the release notes for detailed changes list.
+The latest release version of PSDK is 3.13.1. This version of Payload SDK mainly add some new features support and fixed some
+bugs. Please refer to the release notes for detailed changes list.
 
-* Added support for new drone model Matrice 350 RTK
-* Matrice 300 RTK added support for DJI RC Plus
-* Added support for downloading media files in pieces on all drone models
-* Added support for Osal get random number callback interface on all drone model
-* Fixed issue with the black screen problem when uses third-party camera to playback video on M300 RTK and DJI smart controller screen combination
-* Fixed issue with failure of subscribing L1 camera code stream on M300 RTK
-* Fixed issue with failure of subscribing main camera code stream in dual control mode on M300 RTK
-* Fixed issue with local upgrade function of RTOS platform on Mavic 3E/3T
-* Fixed issue with the initialization failure of using PSDK Payload device and millimeter wave radar on M300 RTK
-* Fixed issue with custom HMS function on M300 RTK and X-Port combination
-* Fixed issue with invalid TTS option of speaker widget on M300 RTK
-* Fixed issue with downloading file list with high probability of failure when the camera photos are over 400 on M300 RTK
-* Fixed some of the memory leaks
+### Released Feature List
 
+* Supports Mavic 3TA  model
+
+### Bug Fixes and Performance Improvements
+* Fixed an issue where the `DjiCore_Init` API failed on the Matrice 300.
+* Fixed an issue where quaternion data subscription failed for the Matrice 350 RTK.
+* Fixed occasional failures in the `DjiCore_Deinit` API.
+* Fixed occasional crashes caused by custom HMS modules.
+* Changed the default to not support RC-less flight. and exposed the `DjiFlightController_SetRCLostActionEnableStatus` API to disable or enable actions when the RC is lost.
+Note If you need to use RC-less flight, you must call this interface to disable RC-lost actions after `DjiFlightController_Init`. See the interface header file documentation for details.  
 ## License
 
 Payload SDK codebase is MIT-licensed. Please refer to the LICENSE file for detailed information.
-
-## Contributing
-
-Please read the following guidelines before starting work on a pull request.
-
-#### Summary of the guidelines:
-
-* One pull request per issue;
-* Choose the right base branch;
-* Clean up "oops" commits before submitting;
-* Follow the coding style by "doc/dji_sdk_code_style"
 
 ## Support
 
@@ -70,3 +56,7 @@ You can also communicate with other developers by the following methods:
 
 - Post questions on [**Stackoverflow**](http://stackoverflow.com) using [**
   dji-sdk**](http://stackoverflow.com/questions/tagged/dji-sdk) tag
+
+## About Pull Request
+As always, the DJI Dev Team is committed to improving your developer experience, and we also welcome your contribution,
+but the code review of any pull request maybe not timely, when you have any questionplease send an email to dev@dji.com.

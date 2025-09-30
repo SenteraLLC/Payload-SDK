@@ -133,25 +133,7 @@ typedef enum {
     DJI_CAMERA_MANAGER_EXPOSURE_MODE_EXPOSURE_UNKNOWN = 0xFF /*!< The camera exposure mode is unknown. */
 } E_DjiCameraManagerExposureMode;
 
-/*! @brief the photo action of INTERVAL shooting photo mode
- */
-typedef enum {
-    /*! The number of pictures to continuously take at one time in AEB mode is 3
-     */
-    DJI_CAMERA_MANAGER_PHOTO_AEB_COUNT_3 = 3,
-    /*! The number of pictures to continuously take at one time in AEB mode is 5
-     */
-    DJI_CAMERA_MANAGER_PHOTO_AEB_COUNT_5 = 5,
-    /*! The number of pictures to continuously take at one time in AEB mode is 7
-     */
-    DJI_CAMERA_MANAGER_PHOTO_AEB_COUNT_7 = 7,
-    /*! The number of pictures to continuously take at one time in AEB mode is
-     * unknown.
-     */
-    DJI_CAMERA_MANAGER_PHOTO_AEB_COUNT_KNOWN = 0xFF,
-} E_DjiCameraManagerPhotoAEBCount;
-
-/*! @breif CameraModule focus mode. If the physical AF switch on the camera is
+/*! @brief CameraModule focus mode. If the physical AF switch on the camera is
  * set to auto.
  */
 typedef enum {
@@ -178,7 +160,7 @@ typedef enum {
     DJI_CAMERA_MANAGER_FOCUS_MODE_UNKNOWN = 0xFF,
 } E_DjiCameraManagerFocusMode;
 
-/*! @breif CameraModule shutter mode.
+/*! @brief CameraModule shutter mode.
  */
 typedef enum {
     /*! The shutter mode of camera is automatical */
@@ -269,21 +251,21 @@ typedef enum {
     DJI_CAMERA_MANAGER_ISO_AUTO = 0x00,
     /*!  The ISO value is set to 100. */
     DJI_CAMERA_MANAGER_ISO_100 = 0x03,
-    /*! The ISO value is set to 100. */
+    /*! The ISO value is set to 200. */
     DJI_CAMERA_MANAGER_ISO_200 = 0x04,
-    /*! The ISO value is set to 100.*/
+    /*! The ISO value is set to 400.*/
     DJI_CAMERA_MANAGER_ISO_400 = 0x05,
-    /*! The ISO value is set to 100.*/
+    /*! The ISO value is set to 800.*/
     DJI_CAMERA_MANAGER_ISO_800 = 0x06,
-    /*! The ISO value is set to 100.*/
+    /*! The ISO value is set to 1600.*/
     DJI_CAMERA_MANAGER_ISO_1600 = 0x07,
-    /*! The ISO value is set to 100.*/
+    /*! The ISO value is set to 3200.*/
     DJI_CAMERA_MANAGER_ISO_3200 = 0x08,
-    /*! The ISO value is set to 100.*/
+    /*! The ISO value is set to 6400.*/
     DJI_CAMERA_MANAGER_ISO_6400 = 0x09,
-    /*! The ISO value is set to 100.*/
+    /*! The ISO value is set to 12800.*/
     DJI_CAMERA_MANAGER_ISO_12800 = 0x0A,
-    /*! The ISO value is set to 100.*/
+    /*! The ISO value is set to 25600.*/
     DJI_CAMERA_MANAGER_ISO_25600 = 0x0B,
     /*! ISO value is fixed by the camera firmware. When the camera color is set
      to D_LOG, camera will fix the ISO to a specific value in order to optimize
@@ -448,6 +430,39 @@ typedef enum {
     DJI_CAMERA_MANAGER_FILE_LIST_COUNT_ALL_PER_SLICE = 0xFFFF,
 } E_DjiCameraManagerFileListCountPerSlice;
 
+typedef enum {
+    DJI_CAMERA_MANAGER_SOURCE_DEFAULT_CAM = 0x0,
+    DJI_CAMERA_MANAGER_SOURCE_WIDE_CAM = 0x1,
+    DJI_CAMERA_MANAGER_SOURCE_ZOOM_CAM = 0x2,
+    DJI_CAMERA_MANAGER_SOURCE_IR_CAM = 0x3,
+    DJI_CAMERA_MANAGER_SOURCE_VISIBLE_CAM = 0x7,
+} E_DjiCameraManagerStreamSource, E_DjiCameraManagerStreamStorage;
+
+typedef enum {
+    DJI_CAMERA_MANAGER_NIGHT_SCENE_MODE_DISABLE = 0,
+    DJI_CAMERA_MANAGER_NIGHT_SCENE_MODE_ENABLE = 1,
+    DJI_CAMERA_MANAGER_NIGHT_SCENE_MODE_AUTO = 2,
+} E_DjiCameraManagerNightSceneMode;
+
+typedef enum {
+    DJI_CAMERA_MANAGER_CAPTURE_OR_RECORDING_CAPTURE = 0,
+    DJI_CAMERA_MANAGER_CAPTURE_OR_RECORDING_RECORDING = 1,
+} E_DjiCameraManagerCaptureOrRecording;
+
+typedef enum {
+    DJI_CAMERA_MANAGER_EXPAND_NAME_TYPE_FILE = 1,
+    DJI_CAMERA_MANAGER_EXPAND_NAME_TYPE_DIR = 2,
+} E_DjiCameraManagerExpandNameType;
+
+typedef enum {
+    DJI_CAMERA_MANAGER_PHOTO_RATIO_4X3 = 0,
+    DJI_CAMERA_MANAGER_PHOTO_RATIO_16X9 = 1,
+    DJI_CAMERA_MANAGER_PHOTO_RATIO_3X2 = 2,
+    DJI_CAMERA_MANAGER_PHOTO_RATIO_1X1 = 3,
+    DJI_CAMERA_MANAGER_PHOTO_RATIO_18X3 = 4,
+    DJI_CAMERA_MANAGER_PHOTO_RATIO_5X4 = 5,
+} E_DjiCameraManagerPhotoRatio;
+
 typedef struct {
     uint8_t firmware_version[4];
 } T_DjiCameraManagerFirmwareVersion;
@@ -493,12 +508,23 @@ typedef struct {
 } T_DjiCameraManagerFileAttributeData;
 
 typedef struct {
-    char fileName[256];
+    char fileName[DJI_FILE_NAME_SIZE_MAX];
+    uint32_t fileSize;
+    uint32_t fileIndex;
+    T_DjiCameraManagerFileCreateTime createTime;
+    E_DjiCameraMediaFileSubType type;
+    T_DjiCameraManagerFileAttributeData attributeData;
+} T_DjiCameraManagerSubFileListInfo;
+
+typedef struct {
+    char fileName[DJI_FILE_NAME_SIZE_MAX];
     uint32_t fileSize;
     uint32_t fileIndex;
     T_DjiCameraManagerFileCreateTime createTime;
     E_DjiCameraMediaFileType type;
     T_DjiCameraManagerFileAttributeData attributeData;
+    uint8_t subFileListTotalNum;
+    T_DjiCameraManagerSubFileListInfo* subFileListInfo;
 } T_DjiCameraManagerFileListInfo;
 
 typedef struct {
@@ -515,26 +541,90 @@ typedef enum {
     DJI_DOWNLOAD_FILE_EVENT_START,
     DJI_DOWNLOAD_FILE_EVENT_TRANSFER,
     DJI_DOWNLOAD_FILE_EVENT_END,
+    DJI_DOWNLOAD_FILE_EVENT_START_TRANSFER_END,
 } E_DjiDownloadFileEvent;
 
-/*!< Attention: when the remote control is in split-screen mode, the coordinate range of the x-axis is 0 ~ 0.5
-* */
+typedef enum {
+    DJI_CAMERA_MANAGER_VIDEO_RESOLUTION_640X480P = 0, // 640X480P
+    DJI_CAMERA_MANAGER_VIDEO_RESOLUTION_1280X640P = 2, // 1280X640P
+    DJI_CAMERA_MANAGER_VIDEO_RESOLUTION_1280X720P = 4, // 1280X720P
+    DJI_CAMERA_MANAGER_VIDEO_RESOLUTION_1920X1080P = 10, // 1920X1080P
+    DJI_CAMERA_MANAGER_VIDEO_RESOLUTION_3840X2160P = 16, // 3840X2160P
+} E_DjiCameraManagerVideoResolution;
+
+typedef enum {
+    DJI_CAMERA_MANAGER_VIDEO_FRAME_RATE_15FPS = 0, // 14.985
+    DJI_CAMERA_MANAGER_VIDEO_FRAME_RATE_25FPS = 2, // 25.000
+    DJI_CAMERA_MANAGER_VIDEO_FRAME_RATE_30FPS = 3, // 29.970
+    DJI_CAMERA_MANAGER_VIDEO_FRAME_RATE_60FPS = 6, // 59.940
+} E_DjiCameraManagerVideoFrameRate;
+
+typedef enum {
+    DJI_CAMERA_MANAGER_PHOTO_STORAGE_FORMAT_RAW = 0,
+    DJI_CAMERA_MANAGER_PHOTO_STORAGE_FORMAT_JPEG = 1,
+    DJI_CAMERA_MANAGER_PHOTO_STORAGE_FORMAT_RAW_JPEG = 2,
+    DJI_CAMERA_MANAGER_PHOTO_STORAGE_FORMAT_YUV = 3, // Save as YUV format image
+    DJI_CAMERA_MANAGER_PHOTO_STORAGE_FORMAT_RJPEG = 7, // Radiometric JPEG
+} E_DjiCameraManagerPhotoStorageFormat;
+
+typedef enum {
+    DJI_CAMERA_MANAGER_VIDEO_STORAGE_FORMAT_MOV = 0,
+    DJI_CAMERA_MANAGER_VIDEO_STORAGE_FORMAT_MP4 = 1,
+} E_DjiCameraManagerVideoStorageFormat;
+
+typedef enum {
+    DJI_CAMERA_MANAGER_METERING_MODE_CENTRAL = 0,
+    DJI_CAMERA_MANAGER_METERING_MODE_AVERAGE = 1,
+    DJI_CAMERA_MANAGER_METERING_MODE_SPOT = 2,
+} E_DjiCameraManagerMeteringMode;
+
+typedef enum {
+    DJI_CAMERA_MANAGER_FFC_MODE_MANUAL = 0,
+    DJI_CAMERA_MANAGER_FFC_MODE_AUTO = 1,
+} E_DjiCameraManagerFfcMode;
+
+typedef enum {
+    DJI_CAMERA_MANAGER_IR_GAIN_MODE_AUTO = 0,
+    DJI_CAMERA_MANAGER_IR_GAIN_MODE_LOW = 1,
+    DJI_CAMERA_MANAGER_IR_GAIN_MODE_HIGH = 2,
+} E_DjiCameraManagerIrGainMode;
+
+typedef enum {
+    /* Camera is not capturing photos*/
+    DJI_CAMERA_MANAGER_CAPTURING_STATE_IDLE = 0,
+
+    /* Camera is capturing a single photo */
+    DJI_CAMERA_MANAGER_CAPTURING_STATE_SINGLE = 1,
+
+    /* Camera is capturing multiple photos */
+    DJI_CAMERA_MANAGER_CAPTURING_STATE_MULTI = 2,
+} E_DjiCameraManagerCapturingState;
+
+typedef enum {
+    DJI_CAMERA_MANAGER_RECORDING_STATE_IDLE = 0,
+    DJI_CAMERA_MANAGER_RECORDING_STATE_STARTING = 1,
+    DJI_CAMERA_MANAGER_RECORDING_STATE_RECORDING = 2,
+    DJI_CAMERA_MANAGER_RECORDING_STATE_STOPPING = 3,
+} E_DjiCameraManagerRecordingState;
+
+/*! @brief: when the remote control is in split-screen mode, the coordinate range of the x-axis is 0-0.5.
+ */
 typedef struct {
-    dji_f32_t pointX;               /*! x-coordinate of point thermometry, range: 0 ~ 1 */
-    dji_f32_t pointY;               /*! y-coordinate of point thermometry, range: 0 ~ 1 */
+    dji_f32_t pointX;               /*! x-coordinate of point thermometry, range: 0-1 */
+    dji_f32_t pointY;               /*! y-coordinate of point thermometry, range: 0-1 */
 } T_DjiCameraManagerPointThermometryCoordinate;
 
 typedef struct {
-    dji_f32_t areaTempLtX;          /*! x-coordinate of the upper left corner of the area thermometry, range: 0 ~ 1 */
-    dji_f32_t areaTempLtY;          /*! y-coordinate of the upper left corner of the area thermometry, range: 0 ~ 1 */
-    dji_f32_t areaTempRbX;          /*! x-coordinate of the lower right corner of the area thermometry, range: 0 ~ 1 */
-    dji_f32_t areaTempRbY;          /*! y-coordinate of the lower right corner of the area thermometry, range: 0 ~ 1 */
+    dji_f32_t areaTempLtX;          /*! x-coordinate of the upper left corner of the area thermometry, range: 0-1 */
+    dji_f32_t areaTempLtY;          /*! y-coordinate of the upper left corner of the area thermometry, range: 0-1 */
+    dji_f32_t areaTempRbX;          /*! x-coordinate of the lower right corner of the area thermometry, range: 0-1 */
+    dji_f32_t areaTempRbY;          /*! y-coordinate of the lower right corner of the area thermometry, range: 0-1 */
 } T_DjiCameraManagerAreaThermometryCoordinate;
 
 //result of point thermometry
 typedef struct {
-    dji_f32_t pointX;              /*! x-coordinate of point thermometry, range: 0 ~ 1 */
-    dji_f32_t pointY;              /*! y-coordinate of point thermometry, range: 0 ~ 1 */
+    dji_f32_t pointX;              /*! x-coordinate of point thermometry, range: 0-1 */
+    dji_f32_t pointY;              /*! y-coordinate of point thermometry, range: 0-1 */
     dji_f32_t pointTemperature;    /*! The temperature of the current point */
 } T_DjiCameraManagerPointThermometryData;
 
@@ -555,6 +645,7 @@ typedef struct {
 
 typedef struct {
     E_DjiDownloadFileEvent downloadFileEvent;
+    uint8_t fileType;
     uint32_t fileIndex;
     uint32_t fileSize;
     dji_f32_t progressInPercent;
@@ -570,6 +661,68 @@ typedef struct {
     bool enable_lidar;
     uint8_t exception;
 } T_DjiCameraManagerLaserRangingInfo;
+
+typedef struct {
+    uint32_t size;
+    E_DjiCameraManagerStreamSource streamSource[4];
+    E_DjiCameraManagerStreamStorage streamStorage[4];
+} T_DjiCameraManagerStreamList;
+
+typedef struct {
+    E_DjiCameraManagerVideoResolution videoResolution;
+    E_DjiCameraManagerVideoFrameRate videoFrameRate;
+} T_DjiCameraManagerVideoFormat;
+
+typedef struct {
+    uint8_t size;
+    union {
+        E_DjiCameraManagerPhotoStorageFormat photoStorageFormat[16];
+        E_DjiCameraManagerVideoStorageFormat videoStorageFormat[16];
+        E_DjiCameraManagerPhotoRatio photoRatioFormat[16];
+        E_DjiCameraManagerStreamSource streamSource[16];
+        E_DjiCameraManagerStreamStorage streamStorage[16];
+        E_DjiCameraManagerNightSceneMode nightSceneMode[16];
+        E_DjiCameraManagerMeteringMode meteringMode[16];
+    };
+    uint32_t minValue;
+    uint32_t maxValue;
+} T_DjiCameraManagerRangeList;
+
+typedef struct {
+    double lowGainTempMin;
+    double lowGainTempMax;
+    double highGainTempMin;
+    double highGainTempMax;
+} T_DjiCameraManagerIrTempMeterRange;
+
+typedef struct {
+    uint32_t totalCapacity;     /* MByte */
+    uint32_t remainCapacity;    /* MByte */
+} T_DjiCameraManagerStorageInfo;
+
+typedef struct {
+    uint32_t flag; /* 0xFFFFFFFF */
+    uint32_t seqNum;
+    uint64_t timestamp;
+    uint32_t dataByte; /* actual num of bytes used for points */
+} __attribute__((packed)) T_DjiCameraManagerPointCloudHeader;
+
+typedef struct {
+    dji_f32_t x; /* the x-axis of NED coordinate system */
+    dji_f32_t y; /* the y-axis of NED coordinate system */
+    dji_f32_t z; /* the z-axis of NED coordinate system */
+    uint8_t intensity;
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+}__attribute__((packed)) T_DjiCameraManagerPointXYZRGBInfo;
+
+typedef struct {
+    T_DjiCameraManagerPointCloudHeader pointCloudHeader;
+    uint32_t crc_header;
+    uint32_t crc_rest;
+    T_DjiCameraManagerPointXYZRGBInfo points[1];
+}__attribute__((packed)) T_DjiCameraManagerColorPointCloud;
 
 typedef T_DjiReturnCode (*DjiCameraManagerDownloadFileDataCallback)(T_DjiDownloadFilePacketInfo packetInfo,
                                                                     const uint8_t *data,
@@ -592,7 +745,7 @@ T_DjiReturnCode DjiCameraManager_DeInit(void);
 /**
  * @brief Get camera type of the selected camera mounted position.
  * @param position: camera mounted position
- * @param cameraType: see references of E_DjiCameraType.
+ * @param cameraType: refer to E_DjiCameraType.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_GetCameraType(E_DjiMountPosition position, E_DjiCameraType *cameraType);
@@ -600,19 +753,28 @@ T_DjiReturnCode DjiCameraManager_GetCameraType(E_DjiMountPosition position, E_Dj
 /**
  * @brief Get camera firmware version of the selected camera mounted position.
  * @param position: camera mounted position
- * @param firmwareVersion: see references of T_DjiCameraManagerFirmwareVersion.
+ * @param firmwareVersion: refer to T_DjiCameraManagerFirmwareVersion.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_GetFirmwareVersion(E_DjiMountPosition position,
                                                     T_DjiCameraManagerFirmwareVersion *firmwareVersion);
 
 /**
- * @brief Set camera working mode of the selected camera mounted position.
- * @note Set the camera's work mode to taking pictures, video, playback or
- * download and so on. Please note that you cannot change the mode when a certain task
- * is executing.This action will cost about 1~2s.
+ * @brief Get camera connection status.
  * @param position: camera mounted position
- * @param workMode: see reference of E_DjiCameraManagerWorkMode.
+ * @param connectStatus: returned value of connection status
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetCameraConnectStatus(E_DjiMountPosition position,
+                                                        bool *connectStatus);
+
+/**
+ * @brief Set camera working mode of the selected camera mounted position.
+ * @note Set the camera's work mode to options such as taking pictures, recording video,
+ * playback, or downloading. Please note that you cannot change the mode when a certain
+ * task is executing. This action takes about 1-2 s.
+ * @param position: camera mounted position
+ * @param workMode: refer to E_DjiCameraManagerWorkMode.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_SetMode(E_DjiMountPosition position,
@@ -621,7 +783,7 @@ T_DjiReturnCode DjiCameraManager_SetMode(E_DjiMountPosition position,
 /**
  * @brief Get camera working mode of the selected camera mounted position.
  * @param position: camera mounted position
- * @param workMode: see reference of E_DjiCameraManagerWorkMode.
+ * @param workMode: refer to E_DjiCameraManagerWorkMode.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_GetMode(E_DjiMountPosition position,
@@ -630,7 +792,7 @@ T_DjiReturnCode DjiCameraManager_GetMode(E_DjiMountPosition position,
 /**
 * @brief Set camera shoot mode of the selected camera mounted position.
 * @param position: camera mounted position
-* @param mode: see reference of E_DjiCameraManagerShootPhotoMode.
+* @param mode: refer to E_DjiCameraManagerShootPhotoMode.
 * @return Execution result.
 */
 T_DjiReturnCode DjiCameraManager_SetShootPhotoMode(E_DjiMountPosition position,
@@ -639,101 +801,91 @@ T_DjiReturnCode DjiCameraManager_SetShootPhotoMode(E_DjiMountPosition position,
 /**
 * @brief Get camera shoot mode of the selected camera mounted position.
 * @param position: camera mounted position
-* @param mode: see reference of E_DjiCameraManagerShootPhotoMode.
+* @param mode: refer to E_DjiCameraManagerShootPhotoMode.
 * @return Execution result.
 */
 T_DjiReturnCode DjiCameraManager_GetShootPhotoMode(E_DjiMountPosition position,
                                                    E_DjiCameraManagerShootPhotoMode *takePhotoMode);
 
 /**
- * @brief Start to shoot photo.
- * @note Camera must be in ShootPhoto mode. For thermal imaging camera,
- * Single photo can be taken while recording video. The SD card state should
- * be checked before this method is used to ensure sufficient space exists.
+ * @brief Start shooting photo.
+ * @note Camera must be in ShootPhoto mode. For thermal imaging cameras,
+ * it is allowed to take a single photo while recording video. Check the SD
+ * card's capacity before using this method to ensure there is enough space.
  * @param position: camera mounted position
- * @param mode: see reference of E_DjiCameraManagerShootPhotoMode.
+ * @param mode: refer to E_DjiCameraManagerShootPhotoMode.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_StartShootPhoto(E_DjiMountPosition position,
                                                  E_DjiCameraManagerShootPhotoMode mode);
 
 /**
- * @brief Stop to shoot photo when you are in taking photo.
- * @note StartShootPhoto has been invoked and the shoot mode is either
- * Interval or Time-lapse. If the shoot mode is set to single, the camera
- * will automatically stop taking the photo once the individual photo is
- * taken.
+ * @brief Stop shooting photo.
+ * @note Camera must be in ShootPhoto mode and the shoot mode is either
+ * Interval or Time-lapse. If set to single shot mode, the camera will
+ * automatically stop after taking the photo.
  * @param position: camera mounted position
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_StopShootPhoto(E_DjiMountPosition position);
 
 /**
- * @brief Set the burst count in the burst take-photo mode.
+ * @brief Get camera capturing state.
+ * @note This API is not supported by L1/P1/M3D/M3TD models.
  * @param position: camera mounted position
- * @param count: see reference of E_DjiCameraBurstCount.
+ * @param capturingState: result of getting, see E_DjiCameraManagerCapturingState.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetCapturingState(E_DjiMountPosition position,
+                                                   E_DjiCameraManagerCapturingState *capturingState);
+
+/**
+ * @brief Set the burst count for burst shooting mode.
+ * @param position: camera mounted position
+ * @param count: refer to E_DjiCameraBurstCount.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_SetPhotoBurstCount(E_DjiMountPosition position,
                                                     E_DjiCameraBurstCount count);
 
 /**
- * @brief Get the burst count in the burst take-photo mode.
+ * @brief Set the parameters for INTERVAL shooting mode.
+ * @note In this mode, the camera captures a photo, waits a specified interval
+ * of time, then captures another photo, continuing until the set number of
+ * photos is reached. Supported by thermal imaging cameras, too.
  * @param position: camera mounted position
- * @param count: see reference of E_DjiCameraBurstCount.
- * @return Execution result.
- */
-T_DjiReturnCode DjiCameraManager_GetPhotoBurstCount(E_DjiMountPosition position,
-                                                    E_DjiCameraBurstCount *count);
-
-/**
- * @brief Set the burst count in the AEB(Automatic Exposure Bracketing) take-photo mode.
- * @param position: camera mounted position
- * @param count: see reference of E_DjiCameraManagerPhotoAEBCount.
- * @return Execution result.
- */
-T_DjiReturnCode DjiCameraManager_SetPhotoAEBCount(E_DjiMountPosition position,
-                                                  E_DjiCameraManagerPhotoAEBCount count);
-
-/**
- * @brief Get the burst count in the AEB(Automatic Exposure Bracketing) take-photo mode.
- * @param position: camera mounted position
- * @param count: see reference of E_DjiCameraManagerPhotoAEBCount.
- * @return Execution result.
- */
-T_DjiReturnCode DjiCameraManager_GetPhotoAEBCount(E_DjiMountPosition position,
-                                                  E_DjiCameraManagerPhotoAEBCount *count);
-
-/**
- * @brief Set the parameters in the INTERVAL take-photo mode.
- * @note When in this shoot-photo mode, The camera will capture a photo, wait
- * a specified interval of time, take another photo, and continue in this
- * manner until it has taken the required number of photos. Also supported by
- * thermal imaging camera.
- * @param position: camera mounted position
- * @param intervalSetting: see reference of T_DjiCameraPhotoTimeIntervalSettings.
+ * @param intervalSetting: refer to T_DjiCameraPhotoTimeIntervalSettings.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_SetPhotoTimeIntervalSettings(E_DjiMountPosition position,
                                                               T_DjiCameraPhotoTimeIntervalSettings intervalSetting);
 
 /**
- * @brief Get the parameters in the INTERVAL take-photo mode.
+ * @brief Get the parameters for INTERVAL shooting mode.
  * @param position: camera mounted position
- * @param intervalSetting: see reference of T_DjiCameraPhotoTimeIntervalSettings.
+ * @param intervalSetting: refer to T_DjiCameraPhotoTimeIntervalSettings.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_GetPhotoTimeIntervalSettings(E_DjiMountPosition position,
                                                               T_DjiCameraPhotoTimeIntervalSettings *intervalSetting);
 
 /**
- * @brief Set camera focus mode of the selected camera mounted position.
- * @note Set the lens focus mode. When the focus mode is auto, the target
- * point is the focal point. When the focus mode is manual, the target point
- * is the zoom out area if the focus assistant is enabled for the manual
- * mode.
+ * @brief Get the remaining time of interval shooting.
+ * @note Not supported by L1/P1/M3D/M3TD models.
  * @param position: camera mounted position
- * @param focusMode: see reference of E_DjiCameraManagerFocusMode.
+ * @param remainTime: time in seconds.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetIntervalShootingRemainTime(E_DjiMountPosition position,
+                                                               uint8_t *remainTime);
+
+/**
+ * @brief Set camera focus mode of the selected camera mounted position.
+ * @note Set the lens focus mode. In auto focus mode, the target
+ * point is the focal point. In manual focus mode, if focus assist is
+ * enabled, it adjusts focus in the zoomed-out area.
+ * @param position: camera mounted position
+ * @param focusMode: refer to E_DjiCameraManagerFocusMode.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_SetFocusMode(E_DjiMountPosition position,
@@ -741,29 +893,27 @@ T_DjiReturnCode DjiCameraManager_SetFocusMode(E_DjiMountPosition position,
 /**
  * @brief Get camera focus mode of the selected camera mounted position.
  * @param position: camera mounted position
- * @param focusMode: see reference of E_DjiCameraManagerFocusMode.
+ * @param focusMode: refer to E_DjiCameraManagerFocusMode.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_GetFocusMode(E_DjiMountPosition position,
                                               E_DjiCameraManagerFocusMode *focusMode);
 
 /**
- * @brief Set amera focus point of the selected camera mounted position.
- * @note  Sets the lens focus target point. When the focus mode is auto, the
- * target point is the focal point. When the focus mode is manual, the target
- * point is the zoom out area if the focus assistant is enabled for the manual
- * mode.
+ * @brief Set camera focus point of the selected camera mounted position.
+ * @note  Sets the target point for focusing. In auto mode, this is the focal
+ * point. In manual mode with focus assist enabled, it's the zoomed-out area.
  * @param position: camera mounted position
- * @param focusPosData: see reference of T_DjiCameraManagerFocusPosData.
+ * @param focusPosData: refer to T_DjiCameraManagerFocusPosData.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_SetFocusTarget(E_DjiMountPosition position,
                                                 T_DjiCameraManagerFocusPosData focusPosData);
 
 /**
- * @brief Get amera focus point of the selected camera mounted position.
+ * @brief Get camera focus point of the selected camera mounted position.
  * @param position: camera mounted position
- * @param focusPosData: see reference of T_DjiCameraManagerFocusPosData.
+ * @param focusPosData: refer to T_DjiCameraManagerFocusPosData.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_GetFocusTarget(E_DjiMountPosition position,
@@ -771,13 +921,12 @@ T_DjiReturnCode DjiCameraManager_GetFocusTarget(E_DjiMountPosition position,
 
 /**
  * @brief Start camera optical zooming of the selected camera mounted position.
- * @note Start changing the focal length of the lens in specified direction
- * with specified speed. Focal length change (zooming) will halt when maximum
- * or minimum focal lengths are reached, or DjiCameraManager_StopContinuousOpticalZoom*
- * is called.
+ * @note Changes the lens's focal length in the specified direction at a specified
+ * speed. Zooming stops at the lens's max or min focal length or when
+ * StopContinuousOpticalZoom is called.
  * @param position: camera mounted position
- * @param zoomDirection: optical zoom direction, see reference of E_DjiCameraZoomDirection.
- * @param zoomSpeed: optical zoom direction, see reference of E_DjiCameraZoomSpeed.
+ * @param zoomDirection: optical zoom direction, refer to E_DjiCameraZoomDirection.
+ * @param zoomSpeed: optical zoom direction, refer to E_DjiCameraZoomSpeed.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_StartContinuousOpticalZoom(E_DjiMountPosition position,
@@ -785,20 +934,19 @@ T_DjiReturnCode DjiCameraManager_StartContinuousOpticalZoom(E_DjiMountPosition p
                                                             E_DjiCameraZoomSpeed zoomSpeed);
 
 /**
- * @brief Stop camera optical zooming of the selected camera mounted position.
- * @note Called to stop focal length changing, when it currently is from
- * calling DjiCameraManager_StartContinuousOpticalZoom*.
+ * @brief Stop the ongoing optical zoom operation of the selected camera mounted position.
+ * @note Should be called to halt the focal length change initiated by
+ * DjiCameraManager_StartContinuousOpticalZoom.
  * @param position: camera mounted position
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_StopContinuousOpticalZoom(E_DjiMountPosition position);
 
 /**
- * @brief Set parameters for camera optical zooming of the selected camera mounted position.
- * @note In this interface, the zoom will set the zoom factor as the your
- * target value.
+ * @brief Set target zoom factor for optical zooming of the selected camera mounted position.
+ * @note This interface sets the zoom to the specified target value.
  * @param position: camera mounted position
- * @param zoomDirection: optical zoom direction, see reference of E_DjiCameraZoomDirection.
+ * @param zoomDirection: optical zoom direction, refer to E_DjiCameraZoomDirection.
  * @param factor: target zoom factor.
  * @return Execution result.
  */
@@ -809,14 +957,14 @@ T_DjiReturnCode DjiCameraManager_SetOpticalZoomParam(E_DjiMountPosition position
 /**
  * @brief Get parameters for camera optical zooming of the selected camera mounted position.
  * @param position: camera mounted position
- * @param opticalZoomParam: see reference of T_DjiCameraManagerOpticalZoomParam.
+ * @param opticalZoomParam: refer to T_DjiCameraManagerOpticalZoomParam.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_GetOpticalZoomParam(E_DjiMountPosition position,
                                                      T_DjiCameraManagerOpticalZoomParam *opticalZoomParam);
 
 /**
- * @brief Set parameters for camera infrared zooming of the selected camera mounted position.
+ * @brief  Set target zoom factor for infrared zooming of the selected camera mounted position.
  * @param position: camera mounted position
  * @param factor: target zoom factor.
  * @return Execution result.
@@ -825,16 +973,7 @@ T_DjiReturnCode DjiCameraManager_SetInfraredZoomParam(E_DjiMountPosition positio
                                                       dji_f32_t factor);
 
 /**
- * @brief Stop camera optical zooming of the selected camera mounted position.
- * @note Called to stop focal length changing, when it currently is from
- * calling DjiCameraManager_StartContinuousOpticalZoom*.
- * @param position: camera mounted position
- * @return Execution result.
- */
-T_DjiReturnCode DjiCameraManager_StopContinuousOpticalZoom(E_DjiMountPosition position);
-
-/**
- * @brief Enable/Disable camera's tap-zoom function of the selected camera mounted position.
+ * @brief Enable/Disable the tap-zoom function for the selected camera mounted position.
  * @note TapZoomAtTarget can only be called when tap-zoom is enabled.
  * @param position: camera mounted position
  * @param param: enable/disable
@@ -853,8 +992,8 @@ T_DjiReturnCode DjiCameraManager_GetTapZoomEnabled(E_DjiMountPosition position, 
 
 /**
  * @brief Set camera's tap-zoom multiplier of the selected camera mounted position.
- * @note Tap-zoom uses a multiplier to change the zoom scale when called. The
- * inal zoom scale for a TapZoom will be: Current Zoom Scale x Multiplier.
+ * @note The final zoom scale during a tap-zoom action will be:
+ * Current Zoom Scale x Multiplier.
  * @param position: camera mounted position
  * @param tapZoomMultiplier: The multiplier range is [1,5]. A multiplier of 1 will not change the zoom.
  * hen the multiplier is 1, the zoom scale will not change during TapZoom.
@@ -873,24 +1012,50 @@ T_DjiReturnCode DjiCameraManager_GetTapZoomMultiplier(E_DjiMountPosition positio
 
 /**
  * @brief Set camera's tap-zoom point of the selected camera mounted position.
- * @note Tap-zoom at the target. It can be called only when TapZoom is
- * enabled. When a new target is set, the gimbal will rotate and locate the
- * target in the center of the screen. At the same time, the camera will zoom
- * by multiplying the TapZoom multiplier
+ * @note Only available when tap-zoom is enabled. Sets a new target,
+ * reorienting the gimbal to locate the target on the screen center and
+ * applying the tap-zoom multiplier.
  * @param position: camera mounted position
- * @param tapZoomPos: see reference of T_DjiCameraManagerTapZoomPosData.
+ * @param tapZoomPos: refer to T_DjiCameraManagerTapZoomPosData.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_TapZoomAtTarget(E_DjiMountPosition position,
                                                  T_DjiCameraManagerTapZoomPosData tapZoomPos);
 
 /**
- * @brief Set camera's exposure mode of the selected camera mounted position.
- * @note  The different exposure modes define whether aperture, shutter speed,
- * ISO can be set automatically or manually. Exposure compensation can be
- * changed in all modes except manual mode where it is not settable.
+ * @brief Get camera focus ring value range.
  * @param position: camera mounted position
- * @param mode: see reference of E_DjiCameraManagerExposureMode.
+ * @param rangeList: returned value of range.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetFocusRingRange(E_DjiMountPosition position,
+                                                   T_DjiCameraManagerRangeList *rangeList);
+
+/**
+ * @brief Set camera focus ring value.
+ * @param position: camera mounted position
+ * @param value: focus ring value.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_SetFocusRingValue(E_DjiMountPosition position,
+                                                   uint16_t value);
+
+/**
+ * @brief Get camera focus ring value.
+ * @param position: camera mounted position
+ * @param value: focus ring value to be returned.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetFocusRingValue(E_DjiMountPosition position,
+                                                   uint16_t *value);
+
+/**
+ * @brief Set camera's exposure mode of the selected camera mounted position.
+ * @note Different exposure modes define whether settings like aperture, shutter
+ * speed, and ISO are set automatically or manually. Exposure compensation is
+ * adjustable in all modes except the manual mode.
+ * @param position: camera mounted position
+ * @param mode: refer to E_DjiCameraManagerExposureMode.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_SetExposureMode(E_DjiMountPosition position,
@@ -898,11 +1063,11 @@ T_DjiReturnCode DjiCameraManager_SetExposureMode(E_DjiMountPosition position,
 
 /**
  * @brief Get camera's exposure mode of the selected camera mounted position.
- * @note  The different exposure modes define whether aperture, shutter speed,
- * ISO can be set automatically or manually. Exposure compensation can be
- * changed in all modes except manual mode where it is not settable.
+ * @note Different exposure modes define whether settings like aperture, shutter
+ * speed, and ISO are set automatically or manually. Exposure compensation is
+ * adjustable in all modes except the manual mode.
  * @param position: camera mounted position
- * @param mode: see reference of E_DjiCameraManagerExposureMode.
+ * @param mode: refer to E_DjiCameraManagerExposureMode.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_GetExposureMode(E_DjiMountPosition position,
@@ -913,7 +1078,7 @@ T_DjiReturnCode DjiCameraManager_GetExposureMode(E_DjiMountPosition position,
  * @note  ISO value can only be set when the camera exposure mode is in
  * manual mode.
  * @param position: camera mounted position
- * @param iso: see reference of E_DjiCameraManagerISO.
+ * @param iso: refer to E_DjiCameraManagerISO.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_SetISO(E_DjiMountPosition position,
@@ -922,7 +1087,7 @@ T_DjiReturnCode DjiCameraManager_SetISO(E_DjiMountPosition position,
 /**
  * @brief Get camera's iso value of the selected camera mounted position.
  * @param position: camera mounted position
- * @param iso: see reference of E_DjiCameraManagerISO.
+ * @param iso: refer to E_DjiCameraManagerISO.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_GetISO(E_DjiMountPosition position,
@@ -930,10 +1095,10 @@ T_DjiReturnCode DjiCameraManager_GetISO(E_DjiMountPosition position,
 
 /**
  * @brief Set camera's aperture size value of the selected camera mounted position.
- * @note The exposure mode must be in DJI_CAMERA_MANAGER_EXPOSURE_MODE_EXPOSURE_MANUAL or
+ * @note The exposure mode must be on DJI_CAMERA_MANAGER_EXPOSURE_MODE_EXPOSURE_MANUAL or
  * DJI_CAMERA_MANAGER_EXPOSURE_MODE_APERTURE_PRIORITY.
  * @param position: camera mounted position
- * @param aperture: see reference of E_DjiCameraManagerAperture.
+ * @param aperture: refer to E_DjiCameraManagerAperture.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_SetAperture(E_DjiMountPosition position,
@@ -942,22 +1107,22 @@ T_DjiReturnCode DjiCameraManager_SetAperture(E_DjiMountPosition position,
 /**
  * @brief Get camera's aperture size value of the selected camera mounted position.
  * @param position: camera mounted position
- * @param aperture: see reference of E_DjiCameraManagerAperture.
+ * @param aperture: refer to E_DjiCameraManagerAperture.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_GetAperture(E_DjiMountPosition position,
                                              E_DjiCameraManagerAperture *aperture);
 
 /**
- * @brief Set camera's shutter value of the selected camera mounted position.
- * @note Set the camera shutter speed. The shutter speed should not be set
+ * @brief Set camera's shutter speed value of the selected camera mounted position.
+ * @note Set the camera shutter speed. Ensure the shutter speed is not set
  * slower than the video frame rate when the camera's mode is RECORD_VIDEO.
  * For example, if the video frame rate is 30fps, the shutterSpeed must be <=
  * 1/30. Precondition: The shutter speed can be set only when the camera
  * exposure mode is DJI_CAMERA_MANAGER_EXPOSURE_MODE_EXPOSURE_MANUAL mode or
  * DJI_CAMERA_MANAGER_EXPOSURE_MODE_SHUTTER_PRIORITY
  * @param position: camera mounted position
- * @param shutterSpeed: see reference of E_DjiCameraManagerShutterSpeed.
+ * @param shutterSpeed: refer to E_DjiCameraManagerShutterSpeed.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_SetShutterSpeed(E_DjiMountPosition position,
@@ -966,7 +1131,7 @@ T_DjiReturnCode DjiCameraManager_SetShutterSpeed(E_DjiMountPosition position,
 /**
  * @brief Get camera's shutter value of the selected camera mounted position.
  * @param position: camera mounted position
- * @param shutterSpeed: see reference of E_DjiCameraManagerShutterSpeed.
+ * @param shutterSpeed: refer to E_DjiCameraManagerShutterSpeed.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_GetShutterSpeed(E_DjiMountPosition position,
@@ -974,13 +1139,12 @@ T_DjiReturnCode DjiCameraManager_GetShutterSpeed(E_DjiMountPosition position,
 
 /**
  * @brief Set camera's EV value of the selected camera mounted position.
- * @note Set the camera's exposure compensation. In order to use this
- * function, set the camera exposure mode to shutter, program or aperture.
- * exposure mode is DJI_CAMERA_MANAGER_EXPOSURE_MODE_EXPOSURE_MANUAL mode or
- * DJI_CAMERA_MANAGER_EXPOSURE_MODE_SHUTTER_PRIORITY or
+ * @note This function is available in program, shutter, or aperture
+ * exposure modes. Enums are DJI_CAMERA_MANAGER_EXPOSURE_MODE_EXPOSURE_MANUAL,
+ * DJI_CAMERA_MANAGER_EXPOSURE_MODE_SHUTTER_PRIORITY, and
  * DJI_CAMERA_MANAGER_EXPOSURE_APERTURE_PRIORITY
  * @param position: camera mounted position
- * @param ev: see reference of E_DjiCameraManagerExposureCompensation.
+ * @param ev: refer to E_DjiCameraManagerExposureCompensation.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_SetExposureCompensation(E_DjiMountPosition position,
@@ -989,16 +1153,42 @@ T_DjiReturnCode DjiCameraManager_SetExposureCompensation(E_DjiMountPosition posi
 /**
  * @brief Get camera's EV value of the selected camera mounted position.
  * @param position: camera mounted position
- * @param ev: see reference of E_DjiCameraManagerExposureCompensation.
+ * @param ev: refer to E_DjiCameraManagerExposureCompensation.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_GetExposureCompensation(E_DjiMountPosition position,
                                                          E_DjiCameraManagerExposureCompensation *ev);
 
 /**
+ * @brief Set AE lock mode.
+ * @param position: camera mounted position
+ * @param enable: true to enable, false to disable AE lock.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_SetAELockEnabled(E_DjiMountPosition position,
+                                                  bool enable);
+
+/**
+ * @brief Get AE lock mode.
+ * @note This API is not supported by L1/P1/M3D/M3TD models.
+ * @param position: camera mounted position
+ * @param enable: result of AE lock mode.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetAELockEnabled(E_DjiMountPosition position,
+                                                  bool *enable);
+
+/**
+ * @brief Reset camera settings.
+ * @param position: camera mounted position
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_ResetCameraSettings(E_DjiMountPosition position);
+
+/**
  * @brief Start to take video of the selected camera mounted position.
  * @note Camera must be in RECORD_VIDEO mode. For thermal imaging camera,
- * user can take Single photo when recording video.
+ * user can take a single photo when recording video.
  * @param position: camera mounted position
  * @return Execution result.
  */
@@ -1013,9 +1203,233 @@ T_DjiReturnCode DjiCameraManager_StartRecordVideo(E_DjiMountPosition position);
 T_DjiReturnCode DjiCameraManager_StopRecordVideo(E_DjiMountPosition position);
 
 /**
- * @brief Download selected camera media file list.
- * @note The interface is a synchronous interface, which occupies more CPU resources when using it.
- * If the download file fails, the timeout time is 3S.
+ * @brief Get camera recording state.
+ * @param position: camera mounted position
+ * @param recordingState: result of getting, see E_DjiCameraManagerRecordingState.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetRecordingState(E_DjiMountPosition position,
+                                                   E_DjiCameraManagerRecordingState *recordingState);
+
+/**
+ * @brief Get camera recording time.
+ * @note This API is not supported by L1/P1/M3D/M3TD models.
+ * @param position: camera mounted position
+ * @param recordingTime: result of getting, unit is seconds.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetRecordingTime(E_DjiMountPosition position,
+                                                   uint16_t *recordingTime);
+/**
+ * @brief Get camera stream source range.
+ * @param position: camera mounted position
+ * @param rangeList: pointer to the result.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetStreamSourceRange(E_DjiMountPosition position,
+                                                      T_DjiCameraManagerRangeList *rangeList);
+
+/**
+ * @brief Choose camera stream source.
+ * @param position: camera mounted position
+ * @param streamSource: stream source to be chose.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_SetStreamSource(E_DjiMountPosition position,
+                                                 E_DjiCameraManagerStreamSource streamSource);
+
+/**
+ * @brief Get photo storage format range.
+ * @param position: camera mounted position
+ * @param rangeList: range list returned value
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetPhotoStorageFormatRange(E_DjiMountPosition position,
+                                                     T_DjiCameraManagerRangeList *rangeList);
+
+/**
+ * @brief Set photo storage format.
+ * @param position: camera mounted position
+ * @param format: storage format.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_SetPhotoFormat(E_DjiMountPosition position,
+                                                E_DjiCameraManagerPhotoStorageFormat format);
+
+/**
+ * @brief Get photo storage format.
+ * @param position: camera mounted position
+ * @param format: returned value of storage format.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetPhotoFormat(E_DjiMountPosition position,
+                                                E_DjiCameraManagerPhotoStorageFormat *format);
+
+/**
+ * @brief Get video storage format range.
+ * @param position: camera mounted position
+ * @param rangeList: range list returned value
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetVideoFormatRange(E_DjiMountPosition position,
+                                                     T_DjiCameraManagerRangeList *rangeList);
+
+/**
+ * @brief Set video storage format.
+ * @param position: camera mounted position
+ * @param format: storage format.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_SetVideoStorageFormat(E_DjiMountPosition position,
+                                                E_DjiCameraManagerVideoStorageFormat format);
+
+/**
+ * @brief Get video storage format.
+ * @param position: camera mounted position
+ * @param format: returned value of storage format.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetVideoFormat(E_DjiMountPosition position,
+                                                E_DjiCameraManagerVideoStorageFormat *format);
+
+/**
+ * @brief Get photo ratio range
+ * @param position: camera mounted position
+ * @param rangeList: range list returned value
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetPhotoRatioRange(E_DjiMountPosition position,
+                                                     T_DjiCameraManagerRangeList *rangeList);
+
+/**
+ * @brief Set camera photo ratio
+ * @param position: camera mounted position
+ * @param photoRatio: ratio to be set
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_SetPhotoRatio(E_DjiMountPosition position,
+                                               E_DjiCameraManagerPhotoRatio photoRatio);
+
+/**
+ * @brief Get camera photo ratio
+ * @param position: camera mounted position
+ * @param photoRatio: returned value of photo ratio
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetPhotoRatio(E_DjiMountPosition position,
+                                               E_DjiCameraManagerPhotoRatio *photoRatio);
+
+/**
+ * @brief Get camera video resolution and frame rate
+ * @param position: camera mounted position
+ * @param photoRatio: returned value of video resolution and frame rate
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetVideoResolutionFrameRate(E_DjiMountPosition position,
+                                                             T_DjiCameraManagerVideoFormat *videoParam);
+
+/**
+ * @brief Get night scene mode range.
+ * @param position: camera mounted position.
+ * @param tempRange: returned valued of night scene mode range.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetNightSceneModeRange(E_DjiMountPosition position,
+                                                        T_DjiCameraManagerRangeList *rangeList);
+
+/**
+ * @brief Set night scene mode.
+ * @note Make sure that stream source is zoom or wide camera.
+ * @param position: camera mounted position
+ * @param nightSceneMode: night scene mode.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_SetNightSceneMode(E_DjiMountPosition position,
+                                                  E_DjiCameraManagerNightSceneMode nightSceneMode);
+
+/**
+ * @brief Get night scene mode.
+ * @param position: camera mounted position
+ * @param nightSceneMode: pointer to night scene mode.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetNightSceneMode(E_DjiMountPosition position,
+                                                  E_DjiCameraManagerNightSceneMode *nightSceneMode);
+
+/**
+ * @brief Get range of stream source(s) can be stored when capturing or recording.
+ * @param position: camera mounted position.
+ * @param rangeList: returned value of range, in member streamStorage.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetStreamStorageRange(E_DjiMountPosition position,
+                                                      T_DjiCameraManagerRangeList *rangeList);
+
+/**
+ * @brief Select capture or recording stream(s) to store.
+ * @note Precondition: set camera's work corresponding to streamType
+ * @param position: camera mounted position.
+ * @param streamType: capture mode or recording mode.
+ * @param streamStorageList: Pointer to the struct that contains stream list.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_SetCaptureRecordingStreams(E_DjiMountPosition position,
+                                                            E_DjiCameraManagerCaptureOrRecording streamType,
+                                                            T_DjiCameraManagerStreamList *streamStorageList);
+
+/**
+ * @brief Get the stream(s) of capture or recording mode to be stored.
+ * @param position: camera mounted position.
+ * @param streamType: capture mode or recording mode.
+ * @param streamSourceList: the real return value.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetCaptureRecordingStreams(E_DjiMountPosition position,
+                                                            E_DjiCameraManagerCaptureOrRecording streamType,
+                                                            T_DjiCameraManagerStreamList *streamStorageList);
+
+/**
+ * @brief Turn on/off synchronized split screen zoom function.
+ * @param position: camera mounted position.
+ * @param enable: set true to turn on, false to turn off.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_SetSynchronizedSplitScreenZoomEnabled(E_DjiMountPosition position, bool enable);
+
+
+/**
+ * @brief Set suffix name of directory or file.
+ * @note This setting applies only once for file names.
+ * @param position: camera mounted position.
+ * @param nameType: see E_DjiCameraManagerExpandNameType, select to set name of directory or file.
+ * @param nameSize: Length of the name string, between 1 and 239 characters.
+ * @param nameStr: Content of custom suffix name.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_SetCustomExpandName(E_DjiMountPosition position,
+                                                     E_DjiCameraManagerExpandNameType nameType,
+                                                     const uint8_t *nameStr,
+                                                     uint32_t nameSize);
+
+/**
+ * @brief Get the custom suffix of the most recent directory or file name.
+ * @param position: camera mounted position
+ * @param nameType: to choose directory or file to get custom name
+ * @param nameStr: name string buffer
+ * @param nameSize: On input, indicates the maximum size of nameStr; on output,
+ * the actual size of the name string.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetCustomExpandName(E_DjiMountPosition position,
+                                                     E_DjiCameraManagerExpandNameType nameType,
+                                                     uint8_t *nameStr,
+                                                     uint32_t *nameSize);
+
+
+/**
+ * @brief Downloads a list of media files from the selected camera.
+ * @note This synchronous interface may lead to higher CPU usage.
+ * Times out after 3 seconds if the download fails.
  * @param position: the mount position of the camera
  * @param fileList: the pointer to the downloaded camera file list
  * @return Execution result.
@@ -1024,8 +1438,8 @@ T_DjiReturnCode DjiCameraManager_DownloadFileList(E_DjiMountPosition position, T
 
 /**
  * @brief Download selected camera media file list by slices.
- * @note The interface is a synchronous interface, which occupies more CPU resources when using it.
- * If the download file fails, the timeout time is 3S.
+ * @note This synchronous interface may lead to higher CPU usage.
+ * Times out after 3 seconds if the download fails.
  * @param position: the mount position of the camera
  * @param sliceConfig: the slices config for downloading file list
  * @param fileList: the pointer to the downloaded camera file list
@@ -1035,7 +1449,7 @@ T_DjiReturnCode DjiCameraManager_DownloadFileListBySlices(E_DjiMountPosition pos
                                                           T_DjiCameraManagerSliceConfig sliceConfig,
                                                           T_DjiCameraManagerFileList *fileList);
 /**
- * @brief Regsiter selected camera download file data callback,
+ * @brief Registers a callback for downloading file data.
  * @param position: the mount position of the camera
  * @param callback: the download file data callback
  * @return Execution result.
@@ -1044,15 +1458,60 @@ T_DjiReturnCode DjiCameraManager_RegDownloadFileDataCallback(E_DjiMountPosition 
                                                              DjiCameraManagerDownloadFileDataCallback callback);
 
 /**
- * @brief Download selected camera media file by file index.
- * @note Only support download one file at the same time, the new file download need wait for the previous file
- * download finished.The interface is a synchronous interface, which occupies more CPU resources when using it.
- * If the download file fails, the timeout time is 3S.
+ * @brief Downloads a media file specified by its index.
+ * @note Supports downloading one file at a time. Wait for a download to finish before starting another.
+ * This synchronous interface may lead to higher CPU usage.
+ * Times out after 3 seconds if the download fails.
  * @param position: the mount position of the camera
  * @param fileIndex: the index of the camera media file
  * @return Execution result.
  */
 T_DjiReturnCode DjiCameraManager_DownloadFileByIndex(E_DjiMountPosition position, uint32_t fileIndex);
+
+/**
+ * @brief Download selected camera media file by file index and file type.
+ * @note This API only supports L2 camera.
+ * Supports downloading one file at a time. Wait for a download to finish before starting another.
+ * This synchronous interface may lead to higher CPU usage.
+ * Times out after 3 seconds if the download fails.
+ * @param position: the mount position of the camera
+ * @param fileIndex: the index of the camera media file
+ * @param fileType: the sub type of the camera media file
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_DownloadSubFileByIndexAndSubType(E_DjiMountPosition position, uint32_t index, E_DjiCameraMediaFileSubType fileType);
+/**
+ * @brief Obtains the rights to download media files before downloading media files
+ * @param position: the mount position of the camera
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_ObtainDownloaderRights(E_DjiMountPosition position);
+
+/**
+ * @brief Releases the rights to download media files after downloading media files
+ * @note Failure to release downloader rights may restrict access to the camera album
+ * by the pilot app.
+ * @param position: the mount position of the camera
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_ReleaseDownloaderRights(E_DjiMountPosition position);
+
+/**
+ * @brief Format SD card.
+ * @param position: the mount position of the camera
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_FormatStorage(E_DjiMountPosition position);
+
+/**
+ * @brief Get storage info of SD card.
+ * @note This API doesn't support L1/P1/M3D/M3TD models.
+ * @param position: the mount position of the camera
+ * @param storageInfo: Result of SD Card storage information
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetStorageInfo(E_DjiMountPosition position,
+                                                T_DjiCameraManagerStorageInfo *storageInfo);
 
 /**
  * @brief Delete selected camera media file by file index.
@@ -1111,6 +1570,133 @@ T_DjiReturnCode DjiCameraManager_SetAreaThermometryCoordinate(E_DjiMountPosition
  */
 T_DjiReturnCode DjiCameraManager_GetAreaThermometryData(E_DjiMountPosition position,
                                                         T_DjiCameraManagerAreaThermometryData *areaThermometryData);
+
+/**
+ * @brief Set FFC mode.
+ * @param position: camera mounted position.
+ * @param ffcMode: mode to be set.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_SetFfcMode(E_DjiMountPosition position, E_DjiCameraManagerFfcMode ffcMode);
+
+/**
+ * @brief Trigger FFC one time.
+ * @param position: camera mounted position.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_TriggerFfc(E_DjiMountPosition position);
+
+/**
+ * @brief Set infrared camera gain mode.
+ * @param position: camera mounted position.
+ * @param gainMode: gain mode to set.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_SetInfraredCameraGainMode(E_DjiMountPosition position,
+                                               E_DjiCameraManagerIrGainMode gainMode);
+
+/**
+ * @brief Get temperature range of infrared camera.
+ * @param position: camera mounted position.
+ * @param tempRange: returned valued of temperature range.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetInfraredCameraGainModeTemperatureRange(E_DjiMountPosition position,
+                                                               T_DjiCameraManagerIrTempMeterRange *tempRange);
+
+/**
+ * @brief Get metergin mode range of infrared camera.
+ * @param position: camera mounted position.
+ * @param tempRange: returned value of metering range.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetMeteringModeRange(E_DjiMountPosition position,
+                                                      T_DjiCameraManagerRangeList *rangeList);
+
+/**
+ * @brief Set camera metering mode.
+ * @param position: camera mounted position
+ * @param meteringMode: metering mode
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_SetMeteringMode(E_DjiMountPosition position,
+                                                 E_DjiCameraManagerMeteringMode meteringMode);
+
+/**
+ * @brief Get camera metering mode.
+ * @param position: camera mounted position
+ * @param meteringMode: pointer to returned value of metering mode
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetMeteringMode(E_DjiMountPosition position,
+                                                 E_DjiCameraManagerMeteringMode *meteringMode);
+
+/**
+ * @brief Get range of metering point.
+ * @param position: camera mounted position
+ * @param hrzNum: returned value, horizontal range.
+ * @param vtcNum: returned value, vertical range.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetMeteringPointRegionRange(E_DjiMountPosition position,
+                                                             uint8_t *hrzNum, uint8_t *vtcNum);
+/**
+ * @brief Set metering point.
+ * @param position: camera mounted position
+ * @param x: Horizontal coordinate value, should be no greater than hrzNum - 1.
+ * @param y: Horizontal coordinate value, should be no greater than vtcNum - 1.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_SetMeteringPoint(E_DjiMountPosition position,
+                                                  uint8_t x, uint8_t y);
+
+/**
+ * @brief Set metering point normalize.
+ * @param position: camera mounted position
+ * @param x: Normalized horizontal coordinate, value ranges in 0 ~ 1.
+ * @param y: Normalized Vertical coordinate, value ranges in 0 ~ 1.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_SetMeteringPointNormalized(E_DjiMountPosition position,
+                                                           dji_f32_t x, dji_f32_t y);
+
+/**
+ * @brief Get camera metering mode.
+ * @param position: camera mounted position
+ * @param x: returned valued, current metering point in horizontal coordinate.
+ * @param y: returned valued, current metering point in vertical coordinate.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetMeteringPoint(E_DjiMountPosition position,
+                                                  uint8_t *x, uint8_t *y);
+
+
+/**
+ * @brief Get camera metering mode.
+ * @param position: camera mounted position
+ * @param x: a pointer to a float (dji_f32_t) that will receive the normalized x-coordinate of the
+ * metering point.
+ * @param y: a pointer to a float (dji_f32_t) that will receive the normalized y-coordinate of the
+ * metering point.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetMeteringPointNormalized(E_DjiMountPosition position,
+                                                           dji_f32_t *x, dji_f32_t *y);
+
+/**
+ * @brief Start to record point cloud of the selected camera mounted position.
+ * @param position: camera mounted position
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_StartRecordPointCloud(E_DjiMountPosition position);
+
+/**
+ * @brief Stop to record point cloud of the selected camera mounted position.
+ * @note Precondition: The camera is recording currently.
+ * @param position: camera mounted position
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_StopRecordPointCloud(E_DjiMountPosition position);
 
 #ifdef __cplusplus
 }

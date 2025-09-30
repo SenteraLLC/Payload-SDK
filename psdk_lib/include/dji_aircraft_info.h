@@ -46,38 +46,56 @@ typedef struct {
 } T_DjiMobileAppInfo;
 
 /**
- * @brief Some base information of aircraft system, mainly including some constant parameters information of system.
+ * @brief Basic information about the aircraft system, mainly including some constant parameters information.
  */
 typedef struct {
+    E_DjiAircraftSeries aircraftSeries; /*!< Aircraft series. */
+    E_DjiMountPositionType mountPositionType; /*!< Mount position type. */
     E_DjiAircraftType aircraftType; /*!< Aircraft type. */
     E_DjiSdkAdapterType djiAdapterType; /*!< DJI adapter type. */
     E_DjiMountPosition mountPosition; /*!< Payload mount position. */
 } T_DjiAircraftInfoBaseInfo;
 
+/**
+ * @brief Aircraft version information.
+ */
+typedef struct {
+    uint8_t debugVersion;
+    uint8_t modifyVersion;
+    uint8_t minorVersion;
+    uint8_t majorVersion;
+} T_DjiAircraftVersion;
 
 /* Exported functions --------------------------------------------------------*/
 /**
- * @brief Get base information of aircraft system, including aircraft type and DJI adapter type.
- * @param baseInfo: pointer to memory space used to store base information of the aircraft system.
+ * @brief Basic information about the aircraft system, including aircraft type and DJI adapter type.
+ * @param baseInfo: Pointer to a memory space where the aircraft's basic information will be stored.
  * @return Execution result.
  */
 T_DjiReturnCode DjiAircraftInfo_GetBaseInfo(T_DjiAircraftInfoBaseInfo *baseInfo);
 
 /**
- * @brief Get information related to mobile APP.
- * @note The mobile APP language and screen type is unknown if RC or APP is not connected to the aircraft system.
- * @param mobileAppInfo: pointer to memory space used to store information related to mobile APP.
+ * @brief Get information related to mobile app.
+ * @note Returns unknown for app language and screen type if the RC or app is not connected to the aircraft system.
+ * @param mobileAppInfo: Pointer to a memory space where the mobile app information will be stored.
  * @return Execution result.
  */
 T_DjiReturnCode DjiAircraftInfo_GetMobileAppInfo(T_DjiMobileAppInfo *mobileAppInfo);
 
 /**
- * @brief Get connection status of payload and aircraft.
+ * @brief Get connection status between the payload and the aircraft.
  * @note Update period: 1Hz
- * @param isConnected: pointer to connection status.
+ * @param isConnected: Pointer to connection status.
  * @return Execution result.
  */
 T_DjiReturnCode DjiAircraftInfo_GetConnectionStatus(bool *isConnected);
+
+/**
+ * @brief Get version of the aircraft.
+ * @param aircraftVersion: Pointer to aircraft version.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiAircraftInfo_GetAircraftVersion(T_DjiAircraftVersion *aircraftVersion);
 
 #ifdef __cplusplus
 }
